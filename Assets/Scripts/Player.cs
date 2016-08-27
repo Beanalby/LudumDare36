@@ -5,14 +5,33 @@ namespace LudumDare36 {
     [RequireComponent(typeof(Prime31.CharacterController2D))]
 
     public class Player : MonoBehaviour {
+
         private float moveSpeed = 15;
         private float jumpSpeed = 35;
         private float gravity = -50f;
 
         private Prime31.CharacterController2D cc;
-        private Vector3 velocity;
+        private Vector3 velocity = Vector3.zero;
+        public Vector3 Velocity { get { return velocity; } }
         private bool isJumping = false;
 
+        private float sceneLoadOffset = 1;
+        
+        public void MoveToScreen(GameScreen newScreen) {
+            Vector3 offset = transform.localPosition;
+            
+            // flip us on the left-right sides of the screen
+            offset.x = -offset.x;
+            if (offset.x > 0) {
+                offset.x -= sceneLoadOffset;
+            } else {
+                offset.x += sceneLoadOffset;
+            }
+            transform.parent = newScreen.transform;
+            transform.localPosition = offset;
+        }
+
+        #region Unity callbacks
         public void Start() {
             cc = GetComponent<Prime31.CharacterController2D>();
         }
@@ -36,5 +55,6 @@ namespace LudumDare36 {
             }
             cc.move(velocity * Time.deltaTime);
         }
+        #endregion
     }
 }
